@@ -14,6 +14,12 @@ services:
       - key: AUTO_RUN_MIGRATIONS
         value: "true"
       - key: DATABASE_URL
-        sync: false
+        fromDatabase:
+          name: telemetry-sidecar-db
+          property: connectionString
       - key: TELEMETRY_SHARED_SECRET
         sync: false
+
+databases:
+  - name: telemetry-sidecar-db
+    plan: free

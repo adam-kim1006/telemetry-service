@@ -1,6 +1,6 @@
 # GitHub And Render Deployment
 
-This guide takes the telemetry service from local Docker to a stable public URL on Render using an existing Postgres database.
+This guide takes the telemetry service from local Docker to a stable public URL on Render using Render Postgres for the initial POC.
 
 ## Before You Start
 
@@ -35,10 +35,11 @@ This repo includes a `render.yaml` blueprint at the repo root.
 It creates:
 
 - a Render web service named `telemetry-sidecar`
+- a Render Postgres database named `telemetry-sidecar-db`
 
-It expects you to provide:
+It wires:
 
-- `DATABASE_URL` for your existing Postgres database
+- `DATABASE_URL` from the Render Postgres connection string
 - `TELEMETRY_SHARED_SECRET` as a dashboard-entered secret
 
 It also sets:
@@ -55,11 +56,11 @@ It also sets:
 4. Connect your GitHub account if needed.
 5. Select the telemetry repo.
 6. Render should detect `render.yaml`.
-7. Review the resource:
+7. Review the resources:
    - web service: `telemetry-sidecar`
-8. Enter a real value for `DATABASE_URL`.
-9. Enter a real value for `TELEMETRY_SHARED_SECRET`.
-10. Create the Blueprint.
+   - Postgres: `telemetry-sidecar-db`
+8. Enter a real value for `TELEMETRY_SHARED_SECRET`.
+9. Create the Blueprint.
 
 ## Step 4: Validate The Deploy
 
@@ -77,9 +78,8 @@ After the first deploy finishes:
 If the service fails to boot:
 
 - check Render deploy logs
-- confirm the app can reach your Postgres host from Render
+- verify the Postgres database finished provisioning
 - confirm `DATABASE_URL` and `TELEMETRY_SHARED_SECRET` are present in Render env vars
-- confirm the database user has permission to create and modify tables in the `make` schema during migrations
 
 ## Step 5: Repoint Salesforce
 
@@ -99,6 +99,6 @@ Once Salesforce is successfully sending events to Render:
 
 ## Suggested First Production Follow-Ups
 
-- move the telemetry tables out of the `make` schema once the long-term database home is decided
+- migrate off free-tier Render Postgres before relying on it long term
 - add a dashboard layer such as Metabase
 - add more milestone events from Apex, LWC, and the parsing microservice
