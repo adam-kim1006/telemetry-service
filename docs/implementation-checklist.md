@@ -97,6 +97,7 @@ AUTO_RUN_MIGRATIONS=true
   - ingestion error spikes
   - no events received in an expected time window
 - [ ] Decide whether to add OpenTelemetry in the telemetry service itself later.
+- [ ] Decide when to move the POC tables out of the shared `make` schema.
 
 ## Recommended Execution Order
 

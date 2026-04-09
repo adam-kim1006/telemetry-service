@@ -4,6 +4,9 @@ import type { EventSource, TelemetryEventInput } from '../schema.js';
 import { allowedEventSources } from '../schema.js';
 import { withTransaction } from '../db.js';
 
+const sessionTable = 'make.telemetry_session';
+const eventTable = 'make.telemetry_event';
+
 export interface IngestResult {
   sessionId: string;
   received: number;
@@ -88,7 +91,7 @@ async function upsertSession(client: PoolClient, events: TelemetryEventInput[]):
 
   await client.query(
     `
-      INSERT INTO telemetry_session (
+      INSERT INTO ${sessionTable} (
         session_id,
         opp_id,
         provider,
@@ -104,13 +107,13 @@ async function upsertSession(client: PoolClient, events: TelemetryEventInput[]):
       DO UPDATE
       SET
         opp_id = EXCLUDED.opp_id,
-        provider = COALESCE(EXCLUDED.provider, telemetry_session.provider),
-        origin = COALESCE(EXCLUDED.origin, telemetry_session.origin),
-        brand = COALESCE(EXCLUDED.brand, telemetry_session.brand),
-        applicant_flow = COALESCE(EXCLUDED.applicant_flow, telemetry_session.applicant_flow),
-        started_at = LEAST(telemetry_session.started_at, EXCLUDED.started_at),
-        last_event_at = GREATEST(telemetry_session.last_event_at, EXCLUDED.last_event_at),
-        final_status = COALESCE(EXCLUDED.final_status, telemetry_session.final_status),
+        provider = COALESCE(EXCLUDED.provider, ${sessionTable}.provider),
+        origin = COALESCE(EXCLUDED.origin, ${sessionTable}.origin),
+        brand = COALESCE(EXCLUDED.brand, ${sessionTable}.brand),
+        applicant_flow = COALESCE(EXCLUDED.applicant_flow, ${sessionTable}.applicant_flow),
+        started_at = LEAST(${sessionTable}.started_at, EXCLUDED.started_at),
+        last_event_at = GREATEST(${sessionTable}.last_event_at, EXCLUDED.last_event_at),
+        final_status = COALESCE(EXCLUDED.final_status, ${sessionTable}.final_status),
         updated_at = NOW()
     `,
     [
@@ -133,7 +136,7 @@ async function insertEvents(client: PoolClient, events: TelemetryEventInput[]): 
   for (const event of events) {
     const result = await client.query(
       `
-        INSERT INTO telemetry_event (
+        INSERT INTO ${eventTable} (
           session_id,
           opp_id,
           event_name,

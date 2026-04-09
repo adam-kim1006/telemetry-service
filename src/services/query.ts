@@ -7,6 +7,9 @@ import type {
 } from '../schema.js';
 import { phaseDefinitions } from '../schema.js';
 
+const sessionTable = 'make.telemetry_session';
+const eventTable = 'make.telemetry_event';
+
 interface SessionRow {
   session_id: string;
   opp_id: string;
@@ -130,7 +133,7 @@ export async function getSessionTimeline(
         final_status,
         created_at,
         updated_at
-      FROM telemetry_session
+      FROM ${sessionTable}
       WHERE session_id = $1
     `,
     [sessionId]
@@ -154,7 +157,7 @@ export async function getSessionTimeline(
         payload_json,
         created_at,
         updated_at
-      FROM telemetry_event
+      FROM ${eventTable}
       WHERE session_id = $1
       ORDER BY event_ts ASC, id ASC
     `,
@@ -188,7 +191,7 @@ export async function getSessionsByOpportunity(
         final_status,
         created_at,
         updated_at
-      FROM telemetry_session
+      FROM ${sessionTable}
       WHERE opp_id = $1
       ORDER BY last_event_at DESC, session_id DESC
     `,
