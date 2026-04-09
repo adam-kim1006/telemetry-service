@@ -21,10 +21,6 @@ Phase 1 external telemetry service for the Salesforce loan application flow. Thi
 
 ## Local development
 
-1. Copy `.env.example` to `.env`
-2. Set a real `TELEMETRY_SHARED_SECRET`
-3. Start Postgres and the app with Docker:
-
 ```bash
 docker compose up --build
 ```
