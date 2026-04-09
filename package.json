@@ -1,0 +1,30 @@
+{
+  "name": "telemetry-sidecar",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "External telemetry service for Salesforce loan application latency tracking.",
+  "main": "dist/src/app.js",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "start": "node dist/src/app.js",
+    "dev": "tsx watch src/app.ts",
+    "migrate": "tsx src/scripts/migrate.ts",
+    "check": "tsc --noEmit -p tsconfig.json"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "fastify": "4.28.1",
+    "fastify-plugin": "^4.5.1",
+    "pg": "^8.13.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "@types/pg": "^8.11.10",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
+  }
+}
