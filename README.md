@@ -22,7 +22,7 @@ Phase 1 external telemetry service for the Salesforce loan application flow. Thi
 ## Local development
 
 ```bash
-docker compose up --build
+docker compose up
 ```
 
 `docker compose` reads `DOCKER_DATABASE_URL`, while local non-Docker runs use `DATABASE_URL`.
