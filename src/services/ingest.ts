@@ -144,9 +144,10 @@ async function insertEvents(client: PoolClient, events: TelemetryEventInput[]): 
           event_ts,
           duration_ms,
           idempotency_key,
+          component,
           payload_json
         )
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8::jsonb)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9::jsonb)
         ON CONFLICT (idempotency_key)
         DO NOTHING
       `,
@@ -158,6 +159,7 @@ async function insertEvents(client: PoolClient, events: TelemetryEventInput[]): 
         event.eventTs,
         event.durationMs ?? null,
         event.idempotencyKey,
+        event.component ?? null,
         JSON.stringify(event.payload ?? {})
       ]
     );

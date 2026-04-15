@@ -22,6 +22,7 @@ CREATE TABLE IF NOT EXISTS make.telemetry_event (
   event_source TEXT NOT NULL,
   event_ts TIMESTAMPTZ NOT NULL,
   duration_ms INTEGER,
+  component TEXT,
   idempotency_key TEXT NOT NULL,
   payload_json JSONB NOT NULL DEFAULT '{}'::JSONB,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
