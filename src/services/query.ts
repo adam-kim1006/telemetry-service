@@ -32,6 +32,7 @@ interface EventRow {
   event_source: StoredTelemetryEvent['eventSource'];
   event_ts: Date;
   duration_ms: number | null;
+  component: string | null;
   idempotency_key: string;
   payload_json: Record<string, unknown>;
   created_at: Date;
@@ -81,6 +82,7 @@ function mapEvent(row: EventRow): StoredTelemetryEvent {
     eventSource: row.event_source,
     eventTs: row.event_ts.toISOString(),
     durationMs: row.duration_ms,
+    component: row.component,
     idempotencyKey: row.idempotency_key,
     payload: row.payload_json ?? {},
     createdAt: row.created_at.toISOString(),
@@ -153,6 +155,7 @@ export async function getSessionTimeline(
         event_source,
         event_ts,
         duration_ms,
+        component,
         idempotency_key,
         payload_json,
         created_at,
