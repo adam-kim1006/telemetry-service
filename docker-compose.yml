@@ -1,37 +1,37 @@
 version: "3.9"
 
 services:
-  app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    depends_on:
-      db:
-        condition: service_healthy
-    environment:
-      PORT: ${PORT:-3000}
-      HOST: ${HOST:-0.0.0.0}
-      DATABASE_URL: ${DOCKER_DATABASE_URL:-postgres://postgres:postgres@db:5432/telemetry}
-      TELEMETRY_SHARED_SECRET: ${TELEMETRY_SHARED_SECRET}
-      AUTO_RUN_MIGRATIONS: ${AUTO_RUN_MIGRATIONS:-true}
-    ports:
-      - "${PORT:-3000}:${PORT:-3000}"
+    app:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        depends_on:
+            db:
+                condition: service_healthy
+        environment:
+            PORT: ${PORT:-3000}
+            HOST: ${HOST:-0.0.0.0}
+            DATABASE_URL: ${DOCKER_DATABASE_URL:-postgres://postgres:postgres@db:5432/telemetry}
+            TELEMETRY_SHARED_SECRET: ${TELEMETRY_SHARED_SECRET}
+            AUTO_RUN_MIGRATIONS: ${AUTO_RUN_MIGRATIONS:-true}
+        ports:
+            - "${PORT:-3000}:${PORT:-3000}"
 
-  db:
-    image: postgres:16-alpine
-    environment:
-      POSTGRES_DB: telemetry
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-    ports:
-      - "5432:5432"
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d telemetry"]
-      interval: 5s
-      timeout: 5s
-      retries: 10
-    volumes:
-      - postgres-data:/var/lib/postgresql/data
+    db:
+        image: postgres:16-alpine
+        environment:
+            POSTGRES_DB: telemetry
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: postgres
+        ports:
+            - "5432:5432"
+        healthcheck:
+            test: ["CMD-SHELL", "pg_isready -U postgres -d telemetry"]
+            interval: 5s
+            timeout: 5s
+            retries: 10
+        volumes:
+            - postgres-data:/var/lib/postgresql/data
 
 volumes:
-  postgres-data:
+    postgres-data:
