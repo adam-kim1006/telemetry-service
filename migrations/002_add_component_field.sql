@@ -1,0 +1,1 @@
+ALTER TABLE make.telemetry_event ADD COLUMN IF NOT EXISTS component TEXT;
