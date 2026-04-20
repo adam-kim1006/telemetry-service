@@ -13,6 +13,7 @@ services:
             HOST: ${HOST:-0.0.0.0}
             DATABASE_URL: ${DOCKER_DATABASE_URL:-postgres://postgres:postgres@db:5432/telemetry}
             TELEMETRY_SHARED_SECRET: ${TELEMETRY_SHARED_SECRET}
+            TEMEMETRY_HMAC_SECRET: ${TELEMETRY_HMAC_SECRET}
             AUTO_RUN_MIGRATIONS: ${AUTO_RUN_MIGRATIONS:-true}
         ports:
             - "${PORT:-3000}:${PORT:-3000}"
