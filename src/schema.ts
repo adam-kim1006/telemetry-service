@@ -27,7 +27,7 @@ export interface TelemetryEventInput {
 
 export interface StoredTelemetryEvent {
     id: number;
-    sessionId: string;
+    sessionId: string | null;
     oppId: string;
     eventName: string;
     eventSource: EventSource;
@@ -35,6 +35,11 @@ export interface StoredTelemetryEvent {
     durationMs: number | null;
     idempotencyKey: string;
     component: string | null;
+    flow: string | null;
+    brand: string | null;
+    result: string | null;
+    entityType: string | null;
+    entityAction: string | null;
     payload: TelemetryPayload;
     createdAt: string;
     updatedAt: string;
