@@ -5,7 +5,7 @@ export type EventSource = (typeof allowedEventSources)[number];
 export type TelemetryPayload = Record<string, unknown>;
 
 export interface TelemetryEventInput {
-    sessionId: string;
+    sessionId?: string | null;
     oppId: string;
     provider?: string | null;
     origin?: string | null;
@@ -18,6 +18,10 @@ export interface TelemetryEventInput {
     durationMs?: number | null;
     idempotencyKey: string;
     finalStatus?: string | null;
+    flow?: string | null;
+    result?: string | null;
+    entityType?: string | null;
+    entityAction?: string | null;
     payload?: TelemetryPayload;
 }
 

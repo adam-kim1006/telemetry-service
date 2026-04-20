@@ -8,7 +8,7 @@ const sessionTable = 'make.telemetry_session';
 const eventTable = 'make.telemetry_event';
 
 export interface IngestResult {
-  sessionId: string;
+  sessionId: string | null;
   received: number;
   inserted: number;
   deduped: number;
@@ -25,10 +25,6 @@ function normalizeTimestamp(value: string): string {
 }
 
 function assertInput(event: TelemetryEventInput): TelemetryEventInput {
-  if (!event.sessionId?.trim()) {
-    throw new Error('sessionId is required');
-  }
-
   if (!event.oppId?.trim()) {
     throw new Error('oppId is required');
   }
@@ -70,7 +66,7 @@ function assertInput(event: TelemetryEventInput): TelemetryEventInput {
   };
 }
 
-async function upsertSession(client: PoolClient, events: TelemetryEventInput[]): Promise<void> {
+async function upsertSession(client: PoolClient, events: (TelemetryEventInput & { sessionId: string })[]): Promise<void> {
   const firstEvent = events[0];
   const lastEventWithSessionMetadata = [...events]
     .reverse()
@@ -145,14 +141,19 @@ async function insertEvents(client: PoolClient, events: TelemetryEventInput[]): 
           duration_ms,
           idempotency_key,
           component,
+          flow,
+          brand,
+          result,
+          entity_type,
+          entity_action,
           payload_json
         )
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9::jsonb)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14::jsonb)
         ON CONFLICT (idempotency_key)
         DO NOTHING
       `,
       [
-        event.sessionId,
+        event.sessionId ?? null,
         event.oppId,
         event.eventName,
         event.eventSource,
@@ -160,6 +161,11 @@ async function insertEvents(client: PoolClient, events: TelemetryEventInput[]): 
         event.durationMs ?? null,
         event.idempotencyKey,
         event.component ?? null,
+        event.flow ?? null,
+        event.brand ?? null,
+        event.result ?? null,
+        event.entityType ?? null,
+        event.entityAction ?? null,
         JSON.stringify(event.payload ?? {})
       ]
     );
@@ -176,26 +182,26 @@ export async function ingestEvents(inputEvents: TelemetryEventInput[]): Promise<
   }
 
   const events = inputEvents.map(assertInput);
-  const firstSessionId = events[0].sessionId;
   const firstOppId = events[0].oppId;
 
   for (const event of events) {
-    if (event.sessionId !== firstSessionId) {
-      throw new Error('All batched events must share the same sessionId');
-    }
-
     if (event.oppId !== firstOppId) {
       throw new Error('All batched events must share the same oppId');
     }
   }
 
+  const sessionId = events[0].sessionId ?? null;
+  const hasSession = sessionId !== null;
+
   const inserted = await withTransaction(async (client) => {
-    await upsertSession(client, events);
+    if (hasSession) {
+      await upsertSession(client, events as (TelemetryEventInput & { sessionId: string })[]);
+    }
     return insertEvents(client, events);
   });
 
   return {
-    sessionId: firstSessionId,
+    sessionId,
     received: events.length,
     inserted,
     deduped: events.length - inserted
