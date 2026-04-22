@@ -1,142 +1,138 @@
-import type { Pool } from 'pg';
+import type { Pool } from "pg";
 
-import type {
-  PhaseDuration,
-  StoredTelemetryEvent,
-  TelemetrySessionRecord
-} from '../schema.js';
-import { phaseDefinitions } from '../schema.js';
+import type { PhaseDuration, StoredTelemetryEvent, TelemetrySessionRecord } from "../schema.js";
+import { phaseDefinitions } from "../schema.js";
 
-const sessionTable = 'make.telemetry_session';
-const eventTable = 'make.telemetry_event';
+const sessionTable = "make.telemetry_session";
+const eventTable = "make.telemetry_event";
 
 interface SessionRow {
-  session_id: string;
-  opp_id: string;
-  provider: string | null;
-  origin: string | null;
-  brand: string | null;
-  applicant_flow: string | null;
-  started_at: Date;
-  last_event_at: Date;
-  final_status: string | null;
-  created_at: Date;
-  updated_at: Date;
+    session_id: string;
+    opp_id: string;
+    service_provider: string | null;
+    origin: string | null;
+    brand: string | null;
+    applicant_flow: string | null;
+    started_at: Date;
+    last_event_at: Date;
+    final_status: string | null;
+    created_at: Date;
+    updated_at: Date;
 }
 
 interface EventRow {
-  id: number;
-  session_id: string | null;
-  opp_id: string;
-  event_name: string;
-  event_source: StoredTelemetryEvent['eventSource'];
-  event_ts: Date;
-  duration_ms: number | null;
-  component: string | null;
-  flow: string | null;
-  brand: string | null;
-  result: string | null;
-  entity_type: string | null;
-  entity_action: string | null;
-  idempotency_key: string;
-  payload_json: Record<string, unknown>;
-  created_at: Date;
-  updated_at: Date;
+    id: number;
+    session_id: string | null;
+    opp_id: string;
+    event_name: string;
+    event_source: StoredTelemetryEvent["eventSource"];
+    event_ts: Date;
+    duration_ms: number | null;
+    component: string | null;
+    flow: string | null;
+    brand: string | null;
+    result: string | null;
+    entity_type: string | null;
+    entity_action: string | null;
+    idempotency_key: string;
+    payload_json: Record<string, unknown>;
+    created_at: Date;
+    updated_at: Date;
 }
 
 export interface SessionTimelineResponse {
-  session: TelemetrySessionRecord;
-  events: StoredTelemetryEvent[];
-  phaseDurations: PhaseDuration[];
+    session: TelemetrySessionRecord;
+    events: StoredTelemetryEvent[];
+    phaseDurations: PhaseDuration[];
 }
 
 export interface OpportunitySessionSummary {
-  sessionId: string;
-  oppId: string;
-  provider: string | null;
-  origin: string | null;
-  brand: string | null;
-  applicantFlow: string | null;
-  startedAt: string;
-  lastEventAt: string;
-  finalStatus: string | null;
+    sessionId: string;
+    oppId: string;
+    service_provider: string | null;
+    origin: string | null;
+    brand: string | null;
+    applicantFlow: string | null;
+    startedAt: string;
+    lastEventAt: string;
+    finalStatus: string | null;
 }
 
 function mapSession(row: SessionRow): TelemetrySessionRecord {
-  return {
-    sessionId: row.session_id,
-    oppId: row.opp_id,
-    provider: row.provider,
-    origin: row.origin,
-    brand: row.brand,
-    applicantFlow: row.applicant_flow,
-    startedAt: row.started_at.toISOString(),
-    lastEventAt: row.last_event_at.toISOString(),
-    finalStatus: row.final_status,
-    createdAt: row.created_at.toISOString(),
-    updatedAt: row.updated_at.toISOString()
-  };
+    return {
+        sessionId: row.session_id,
+        oppId: row.opp_id,
+        service_provider: row.service_provider,
+        origin: row.origin,
+        brand: row.brand,
+        applicantFlow: row.applicant_flow,
+        startedAt: row.started_at.toISOString(),
+        lastEventAt: row.last_event_at.toISOString(),
+        finalStatus: row.final_status,
+        createdAt: row.created_at.toISOString(),
+        updatedAt: row.updated_at.toISOString(),
+    };
 }
 
 function mapEvent(row: EventRow): StoredTelemetryEvent {
-  return {
-    id: row.id,
-    sessionId: row.session_id,
-    oppId: row.opp_id,
-    eventName: row.event_name,
-    eventSource: row.event_source,
-    eventTs: row.event_ts.toISOString(),
-    durationMs: row.duration_ms,
-    component: row.component,
-    flow: row.flow,
-    brand: row.brand,
-    result: row.result,
-    entityType: row.entity_type,
-    entityAction: row.entity_action,
-    idempotencyKey: row.idempotency_key,
-    payload: row.payload_json ?? {},
-    createdAt: row.created_at.toISOString(),
-    updatedAt: row.updated_at.toISOString()
-  };
+    return {
+        id: row.id,
+        sessionId: row.session_id,
+        oppId: row.opp_id,
+        eventName: row.event_name,
+        eventSource: row.event_source,
+        eventTs: row.event_ts.toISOString(),
+        durationMs: row.duration_ms,
+        component: row.component,
+        flow: row.flow,
+        brand: row.brand,
+        result: row.result,
+        entityType: row.entity_type,
+        entityAction: row.entity_action,
+        idempotencyKey: row.idempotency_key,
+        payload: row.payload_json ?? {},
+        createdAt: row.created_at.toISOString(),
+        updatedAt: row.updated_at.toISOString(),
+    };
 }
 
 function computePhaseDurations(events: StoredTelemetryEvent[]): PhaseDuration[] {
-  return phaseDefinitions.flatMap((phase): PhaseDuration[] => {
-    const startEvent = events.find((event) => event.eventName === phase.startEvent);
-    const endEvent = events.find((event) => event.eventName === phase.endEvent);
+    return phaseDefinitions.flatMap((phase): PhaseDuration[] => {
+        const startEvent = events.find((event) => event.eventName === phase.startEvent);
+        const endEvent = events.find((event) => event.eventName === phase.endEvent);
 
-    if (!startEvent || !endEvent) {
-      return [];
-    }
+        if (!startEvent || !endEvent) {
+            return [];
+        }
 
-    const startedAtMs = new Date(startEvent.eventTs).getTime();
-    const endedAtMs = new Date(endEvent.eventTs).getTime();
+        const startedAtMs = new Date(startEvent.eventTs).getTime();
+        const endedAtMs = new Date(endEvent.eventTs).getTime();
 
-    if (endedAtMs < startedAtMs) {
-      return [];
-    }
+        if (endedAtMs < startedAtMs) {
+            return [];
+        }
 
-    return [
-      {
-        name: phase.name,
-        startedAt: startEvent.eventTs,
-        endedAt: endEvent.eventTs,
-        durationMs: endedAtMs - startedAtMs
-      }
-    ];
-  });
+        return [
+            {
+                name: phase.name,
+                startedAt: startEvent.eventTs,
+                endedAt: endEvent.eventTs,
+                durationMs: endedAtMs - startedAtMs,
+            },
+        ];
+    });
 }
 
 export async function getSessionTimeline(
-  pool: Pool,
-  sessionId: string
+    pool: Pool,
+    sessionId: string,
 ): Promise<SessionTimelineResponse | null> {
-  const sessionResult = await pool.query<SessionRow>(
-    `
+    const sessionResult = await pool.query<SessionRow>(
+        `
       SELECT
         session_id,
         opp_id,
-        provider,
+        service_provider,
         origin,
         brand,
         applicant_flow,
@@ -148,15 +144,15 @@ export async function getSessionTimeline(
       FROM ${sessionTable}
       WHERE session_id = $1
     `,
-    [sessionId]
-  );
+        [sessionId],
+    );
 
-  if ((sessionResult.rowCount ?? 0) === 0) {
-    return null;
-  }
+    if ((sessionResult.rowCount ?? 0) === 0) {
+        return null;
+    }
 
-  const eventsResult = await pool.query<EventRow>(
-    `
+    const eventsResult = await pool.query<EventRow>(
+        `
       SELECT
         id,
         session_id,
@@ -179,30 +175,27 @@ export async function getSessionTimeline(
       WHERE session_id = $1
       ORDER BY event_ts ASC, id ASC
     `,
-    [sessionId]
-  );
+        [sessionId],
+    );
 
-  const events = eventsResult.rows.map(mapEvent);
+    const events = eventsResult.rows.map(mapEvent);
 
-  return {
-    session: mapSession(sessionResult.rows[0]),
-    events,
-    phaseDurations: computePhaseDurations(events)
-  };
+    return {
+        session: mapSession(sessionResult.rows[0]),
+        events,
+        phaseDurations: computePhaseDurations(events),
+    };
 }
 
 export interface OppTimelineResponse {
-  oppId: string;
-  events: StoredTelemetryEvent[];
-  phaseDurations: PhaseDuration[];
+    oppId: string;
+    events: StoredTelemetryEvent[];
+    phaseDurations: PhaseDuration[];
 }
 
-export async function getOppTimeline(
-  pool: Pool,
-  oppId: string
-): Promise<OppTimelineResponse> {
-  const result = await pool.query<EventRow>(
-    `
+export async function getOppTimeline(pool: Pool, oppId: string): Promise<OppTimelineResponse> {
+    const result = await pool.query<EventRow>(
+        `
       SELECT
         id,
         session_id,
@@ -225,28 +218,28 @@ export async function getOppTimeline(
       WHERE opp_id = $1
       ORDER BY event_ts ASC, id ASC
     `,
-    [oppId]
-  );
+        [oppId],
+    );
 
-  const events = result.rows.map(mapEvent);
+    const events = result.rows.map(mapEvent);
 
-  return {
-    oppId,
-    events,
-    phaseDurations: computePhaseDurations(events)
-  };
+    return {
+        oppId,
+        events,
+        phaseDurations: computePhaseDurations(events),
+    };
 }
 
 export async function getSessionsByOpportunity(
-  pool: Pool,
-  oppId: string
+    pool: Pool,
+    oppId: string,
 ): Promise<OpportunitySessionSummary[]> {
-  const result = await pool.query<SessionRow>(
-    `
+    const result = await pool.query<SessionRow>(
+        `
       SELECT
         session_id,
         opp_id,
-        provider,
+        service_provider,
         origin,
         brand,
         applicant_flow,
@@ -259,22 +252,22 @@ export async function getSessionsByOpportunity(
       WHERE opp_id = $1
       ORDER BY last_event_at DESC, session_id DESC
     `,
-    [oppId]
-  );
+        [oppId],
+    );
 
-  return result.rows.map((row) => {
-    const session = mapSession(row);
+    return result.rows.map((row) => {
+        const session = mapSession(row);
 
-    return {
-      sessionId: session.sessionId,
-      oppId: session.oppId,
-      provider: session.provider,
-      origin: session.origin,
-      brand: session.brand,
-      applicantFlow: session.applicantFlow,
-      startedAt: session.startedAt,
-      lastEventAt: session.lastEventAt,
-      finalStatus: session.finalStatus
-    };
-  });
+        return {
+            sessionId: session.sessionId,
+            oppId: session.oppId,
+            service_provider: session.service_provider,
+            origin: session.origin,
+            brand: session.brand,
+            applicantFlow: session.applicantFlow,
+            startedAt: session.startedAt,
+            lastEventAt: session.lastEventAt,
+            finalStatus: session.finalStatus,
+        };
+    });
 }
