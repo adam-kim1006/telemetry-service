@@ -1,0 +1,1 @@
+ALTER TABLE make.telemetry_session RENAME COLUMN provider TO service_provider;
