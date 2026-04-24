@@ -7,7 +7,7 @@ export type TelemetryPayload = Record<string, unknown>;
 export interface TelemetryEventInput {
     sessionId?: string | null;
     oppId: string;
-    service_provider?: string | null;
+    serviceProvider?: string | null;
     origin?: string | null;
     brand?: string | null;
     applicantFlow?: string | null;
@@ -48,7 +48,7 @@ export interface StoredTelemetryEvent {
 export interface TelemetrySessionRecord {
     sessionId: string;
     oppId: string;
-    service_provider: string | null;
+    serviceProvider: string | null;
     origin: string | null;
     brand: string | null;
     applicantFlow: string | null;

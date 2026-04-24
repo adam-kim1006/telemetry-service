@@ -3,7 +3,7 @@ CREATE SCHEMA IF NOT EXISTS make;
 CREATE TABLE IF NOT EXISTS make.telemetry_session (
   session_id TEXT PRIMARY KEY,
   opp_id TEXT NOT NULL,
-  provider TEXT,
+  service_provider TEXT,
   origin TEXT,
   brand TEXT,
   applicant_flow TEXT,

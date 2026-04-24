@@ -49,7 +49,7 @@ export interface SessionTimelineResponse {
 export interface OpportunitySessionSummary {
     sessionId: string;
     oppId: string;
-    service_provider: string | null;
+    serviceProvider: string | null;
     origin: string | null;
     brand: string | null;
     applicantFlow: string | null;
@@ -62,7 +62,7 @@ function mapSession(row: SessionRow): TelemetrySessionRecord {
     return {
         sessionId: row.session_id,
         oppId: row.opp_id,
-        service_provider: row.service_provider,
+        serviceProvider: row.service_provider,
         origin: row.origin,
         brand: row.brand,
         applicantFlow: row.applicant_flow,
@@ -261,7 +261,7 @@ export async function getSessionsByOpportunity(
         return {
             sessionId: session.sessionId,
             oppId: session.oppId,
-            service_provider: session.service_provider,
+            serviceProvider: session.serviceProvider,
             origin: session.origin,
             brand: session.brand,
             applicantFlow: session.applicantFlow,

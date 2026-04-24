@@ -75,7 +75,7 @@ async function upsertSession(
         .reverse()
         .find(
             (event) =>
-                event.service_provider ||
+                event.serviceProvider ||
                 event.origin ||
                 event.brand ||
                 event.applicantFlow ||
@@ -118,7 +118,7 @@ async function upsertSession(
         [
             firstEvent.sessionId,
             firstEvent.oppId,
-            lastEventWithSessionMetadata?.service_provider ?? firstEvent.service_provider ?? null,
+            lastEventWithSessionMetadata?.serviceProvider ?? firstEvent.serviceProvider ?? null,
             lastEventWithSessionMetadata?.origin ?? firstEvent.origin ?? null,
             lastEventWithSessionMetadata?.brand ?? firstEvent.brand ?? null,
             lastEventWithSessionMetadata?.applicantFlow ?? firstEvent.applicantFlow ?? null,
