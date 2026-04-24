@@ -13,11 +13,3 @@ ALTER TABLE make.telemetry_event ADD COLUMN IF NOT EXISTS brand         TEXT;
 ALTER TABLE make.telemetry_event ADD COLUMN IF NOT EXISTS result        TEXT;
 ALTER TABLE make.telemetry_event ADD COLUMN IF NOT EXISTS entity_type   TEXT;
 ALTER TABLE make.telemetry_event ADD COLUMN IF NOT EXISTS entity_action TEXT;
-
--- Index for funnel queries: count events by name in a time window.
-CREATE INDEX IF NOT EXISTS idx_telemetry_event_name_ts
-    ON make.telemetry_event (event_name, event_ts DESC);
-
--- Index for brand/flow segmentation queries (Metabase dashboards).
-CREATE INDEX IF NOT EXISTS idx_telemetry_event_brand_flow
-    ON make.telemetry_event (brand, flow);

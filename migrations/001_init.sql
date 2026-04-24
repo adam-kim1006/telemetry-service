@@ -28,15 +28,3 @@ CREATE TABLE IF NOT EXISTS make.telemetry_event (
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
-
-CREATE INDEX IF NOT EXISTS idx_telemetry_session_opp_id
-  ON make.telemetry_session (opp_id);
-
-CREATE INDEX IF NOT EXISTS idx_telemetry_event_session_id
-  ON make.telemetry_event (session_id, event_ts);
-
-CREATE INDEX IF NOT EXISTS idx_telemetry_event_opp_id
-  ON make.telemetry_event (opp_id, event_ts);
-
-CREATE UNIQUE INDEX IF NOT EXISTS uq_telemetry_event_idempotency_key
-  ON make.telemetry_event (idempotency_key);
