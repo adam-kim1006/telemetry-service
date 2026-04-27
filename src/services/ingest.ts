@@ -82,8 +82,7 @@ async function upsertSession(
                 (event) =>
                     event.eventSource === "lwc" &&
                     event.finalStatus != null &&
-                    ((event.payload as Record<string, unknown>)?.stepName != null ||
-                        (event.payload as Record<string, unknown>)?.currentStep != null),
+                    (event.payload as Record<string, unknown>)?.stepName != null,
             )?.finalStatus ?? null;
     const sortedEventTimes = events
         .map((event) => new Date(event.eventTs).toISOString())
