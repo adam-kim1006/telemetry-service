@@ -19,8 +19,6 @@ export interface TelemetryEventInput {
     idempotencyKey: string;
     finalStatus?: string | null;
     result?: string | null;
-    entityType?: string | null;
-    entityAction?: string | null;
     payload?: TelemetryPayload;
 }
 
@@ -36,9 +34,8 @@ export interface StoredTelemetryEvent {
     component: string | null;
     flow: string | null;
     brand: string | null;
+    serviceProvider: string | null;
     result: string | null;
-    entityType: string | null;
-    entityAction: string | null;
     payload: TelemetryPayload;
     createdAt: string;
     updatedAt: string;

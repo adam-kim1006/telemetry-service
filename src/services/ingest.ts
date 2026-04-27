@@ -73,14 +73,18 @@ async function upsertSession(
     const firstEvent = events[0];
     const lastEventWithSessionMetadata = [...events]
         .reverse()
-        .find(
-            (event) =>
-                event.serviceProvider ||
-                event.origin ||
-                event.brand ||
-                event.flow ||
-                event.finalStatus,
-        );
+        .find((event) => event.serviceProvider || event.origin || event.brand || event.flow);
+
+    const lastLwcStepFinalStatus =
+        [...events]
+            .reverse()
+            .find(
+                (event) =>
+                    event.eventSource === "lwc" &&
+                    event.finalStatus != null &&
+                    ((event.payload as Record<string, unknown>)?.stepName != null ||
+                        (event.payload as Record<string, unknown>)?.currentStep != null),
+            )?.finalStatus ?? null;
     const sortedEventTimes = events
         .map((event) => new Date(event.eventTs).toISOString())
         .sort((left, right) => left.localeCompare(right));
@@ -96,7 +100,7 @@ async function upsertSession(
         service_provider,
         origin,
         brand,
-        applicant_flow,
+        flow,
         started_at,
         last_event_at,
         final_status
@@ -109,7 +113,7 @@ async function upsertSession(
         service_provider = COALESCE(EXCLUDED.service_provider, ${sessionTable}.service_provider),
         origin = COALESCE(EXCLUDED.origin, ${sessionTable}.origin),
         brand = COALESCE(EXCLUDED.brand, ${sessionTable}.brand),
-        applicant_flow = COALESCE(EXCLUDED.applicant_flow, ${sessionTable}.applicant_flow),
+        flow = COALESCE(EXCLUDED.flow, ${sessionTable}.flow),
         started_at = LEAST(${sessionTable}.started_at, EXCLUDED.started_at),
         last_event_at = GREATEST(${sessionTable}.last_event_at, EXCLUDED.last_event_at),
         final_status = COALESCE(EXCLUDED.final_status, ${sessionTable}.final_status),
@@ -124,7 +128,7 @@ async function upsertSession(
             lastEventWithSessionMetadata?.flow ?? firstEvent.flow ?? null,
             startedAt,
             lastEventAt,
-            lastEventWithSessionMetadata?.finalStatus ?? firstEvent.finalStatus ?? null,
+            lastLwcStepFinalStatus,
         ],
     );
 }
@@ -147,12 +151,11 @@ async function insertEvents(client: PoolClient, events: TelemetryEventInput[]): 
           flow,
           brand,
           result,
-          entity_type,
-          entity_action,
+          service_provider,
           step_name,
           payload_json
         )
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15::jsonb)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14::jsonb)
         ON CONFLICT (idempotency_key)
         DO NOTHING
       `,
@@ -168,8 +171,7 @@ async function insertEvents(client: PoolClient, events: TelemetryEventInput[]): 
                 event.flow ?? null,
                 event.brand ?? null,
                 event.result ?? null,
-                event.entityType ?? null,
-                event.entityAction ?? null,
+                event.serviceProvider ?? null,
                 ((event.payload as Record<string, unknown>)?.stepName as string) ?? null,
                 JSON.stringify(event.payload ?? {}),
             ],

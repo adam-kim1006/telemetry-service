@@ -31,9 +31,8 @@ interface EventRow {
     component: string | null;
     flow: string | null;
     brand: string | null;
+    service_provider: string | null;
     result: string | null;
-    entity_type: string | null;
-    entity_action: string | null;
     idempotency_key: string;
     payload_json: Record<string, unknown>;
     created_at: Date;
@@ -86,9 +85,8 @@ function mapEvent(row: EventRow): StoredTelemetryEvent {
         component: row.component,
         flow: row.flow,
         brand: row.brand,
+        serviceProvider: row.service_provider,
         result: row.result,
-        entityType: row.entity_type,
-        entityAction: row.entity_action,
         idempotencyKey: row.idempotency_key,
         payload: row.payload_json ?? {},
         createdAt: row.created_at.toISOString(),
@@ -164,9 +162,8 @@ export async function getSessionTimeline(
         component,
         flow,
         brand,
+        service_provider,
         result,
-        entity_type,
-        entity_action,
         idempotency_key,
         payload_json,
         created_at,
@@ -207,9 +204,8 @@ export async function getOppTimeline(pool: Pool, oppId: string): Promise<OppTime
         component,
         flow,
         brand,
+        service_provider,
         result,
-        entity_type,
-        entity_action,
         idempotency_key,
         payload_json,
         created_at,

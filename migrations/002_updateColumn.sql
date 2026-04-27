@@ -1,1 +1,0 @@
-ALTER TABLE make.telemetry_session RENAME COLUMN applicant_flow TO flow;
