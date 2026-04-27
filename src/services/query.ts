@@ -12,7 +12,7 @@ interface SessionRow {
     service_provider: string | null;
     origin: string | null;
     brand: string | null;
-    applicant_flow: string | null;
+    flow: string | null;
     started_at: Date;
     last_event_at: Date;
     final_status: string | null;
@@ -52,7 +52,7 @@ export interface OpportunitySessionSummary {
     serviceProvider: string | null;
     origin: string | null;
     brand: string | null;
-    applicantFlow: string | null;
+    flow: string | null;
     startedAt: string;
     lastEventAt: string;
     finalStatus: string | null;
@@ -65,7 +65,7 @@ function mapSession(row: SessionRow): TelemetrySessionRecord {
         serviceProvider: row.service_provider,
         origin: row.origin,
         brand: row.brand,
-        applicantFlow: row.applicant_flow,
+        flow: row.flow,
         startedAt: row.started_at.toISOString(),
         lastEventAt: row.last_event_at.toISOString(),
         finalStatus: row.final_status,
@@ -135,7 +135,7 @@ export async function getSessionTimeline(
         service_provider,
         origin,
         brand,
-        applicant_flow,
+        flow,
         started_at,
         last_event_at,
         final_status,
@@ -242,7 +242,7 @@ export async function getSessionsByOpportunity(
         service_provider,
         origin,
         brand,
-        applicant_flow,
+        flow,
         started_at,
         last_event_at,
         final_status,
@@ -264,7 +264,7 @@ export async function getSessionsByOpportunity(
             serviceProvider: session.serviceProvider,
             origin: session.origin,
             brand: session.brand,
-            applicantFlow: session.applicantFlow,
+            flow: session.flow,
             startedAt: session.startedAt,
             lastEventAt: session.lastEventAt,
             finalStatus: session.finalStatus,

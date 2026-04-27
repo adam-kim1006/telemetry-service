@@ -10,7 +10,7 @@ export interface TelemetryEventInput {
     serviceProvider?: string | null;
     origin?: string | null;
     brand?: string | null;
-    applicantFlow?: string | null;
+    flow?: string | null;
     component?: string | null;
     eventName: string;
     eventSource: EventSource;
@@ -18,7 +18,6 @@ export interface TelemetryEventInput {
     durationMs?: number | null;
     idempotencyKey: string;
     finalStatus?: string | null;
-    flow?: string | null;
     result?: string | null;
     entityType?: string | null;
     entityAction?: string | null;
@@ -51,7 +50,7 @@ export interface TelemetrySessionRecord {
     serviceProvider: string | null;
     origin: string | null;
     brand: string | null;
-    applicantFlow: string | null;
+    flow: string | null;
     startedAt: string;
     lastEventAt: string;
     finalStatus: string | null;

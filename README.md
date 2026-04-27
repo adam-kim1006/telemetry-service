@@ -17,7 +17,7 @@ Phase 1 external telemetry service for the Salesforce loan application flow. Thi
 - Every event must include `sessionId`, `oppId`, `eventName`, `eventSource`, `eventTs`, and `idempotencyKey`
 - Batched events must belong to one `sessionId` and one `oppId`
 - Server-side callers authenticate with `x-telemetry-secret`
-- Session fields such as `provider`, `origin`, `brand`, and `applicantFlow` are upserted opportunistically as they arrive
+- Session fields such as `provider`, `origin`, `brand`, and `flow` are upserted opportunistically as they arrive
 
 ## Local development
 
@@ -49,18 +49,18 @@ Example:
 
 ```json
 {
-  "sessionId": "sess-123",
-  "oppId": "006ABC123",
-  "provider": "plaid",
-  "origin": "SunshineDE",
-  "brand": "Sunshine",
-  "applicantFlow": "offerFlowContainer",
-  "eventName": "bank_upload_success",
-  "eventSource": "lwc",
-  "eventTs": "2026-04-08T12:00:00.000Z",
-  "durationMs": 123,
-  "idempotencyKey": "sess-123:bank_upload_success:2026-04-08T12:00:00.000Z",
-  "payload": {}
+    "sessionId": "sess-123",
+    "oppId": "006ABC123",
+    "provider": "plaid",
+    "origin": "SunshineDE",
+    "brand": "Sunshine",
+    "flow": "quick-apply",
+    "eventName": "bank_upload_success",
+    "eventSource": "lwc",
+    "eventTs": "2026-04-08T12:00:00.000Z",
+    "durationMs": 123,
+    "idempotencyKey": "sess-123:bank_upload_success:2026-04-08T12:00:00.000Z",
+    "payload": {}
 }
 ```
 
@@ -74,11 +74,11 @@ Response:
 
 ```json
 {
-  "ok": true,
-  "sessionId": "sess-123",
-  "received": 1,
-  "inserted": 1,
-  "deduped": 0
+    "ok": true,
+    "sessionId": "sess-123",
+    "received": 1,
+    "inserted": 1,
+    "deduped": 0
 }
 ```
 
