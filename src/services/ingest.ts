@@ -78,7 +78,7 @@ async function upsertSession(
                 event.serviceProvider ||
                 event.origin ||
                 event.brand ||
-                event.applicantFlow ||
+                event.flow ||
                 event.finalStatus,
         );
     const sortedEventTimes = events
@@ -121,7 +121,7 @@ async function upsertSession(
             lastEventWithSessionMetadata?.serviceProvider ?? firstEvent.serviceProvider ?? null,
             lastEventWithSessionMetadata?.origin ?? firstEvent.origin ?? null,
             lastEventWithSessionMetadata?.brand ?? firstEvent.brand ?? null,
-            lastEventWithSessionMetadata?.applicantFlow ?? firstEvent.applicantFlow ?? null,
+            lastEventWithSessionMetadata?.flow ?? firstEvent.flow ?? null,
             startedAt,
             lastEventAt,
             lastEventWithSessionMetadata?.finalStatus ?? firstEvent.finalStatus ?? null,
