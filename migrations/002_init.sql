@@ -29,8 +29,6 @@ CREATE TABLE IF NOT EXISTS make.telemetry_event (
   flow TEXT,
   brand TEXT,
   result TEXT,
-  entity_type TEXT,
-  entity_action TEXT,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );

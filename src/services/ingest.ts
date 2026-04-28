@@ -59,6 +59,15 @@ function assertInput(event: TelemetryEventInput): TelemetryEventInput {
         throw new Error("payload must be an object when provided");
     }
 
+    if (event.result !== undefined && event.result !== null) {
+        if (typeof event.result !== "string" || !event.result.trim()) {
+            throw new Error("result must be a non-empty string when provided");
+        }
+        if (event.result.length > 100) {
+            throw new Error("result must be 100 characters or fewer");
+        }
+    }
+
     return {
         ...event,
         eventTs: normalizeTimestamp(event.eventTs),
